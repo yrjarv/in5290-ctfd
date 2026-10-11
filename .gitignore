@@ -77,6 +77,8 @@ CTFd/uploads
 *.db
 *.log
 *.log.*
+# PEM
+conf/nginx/*.pem
 
 # CTFd exports
 *.zip
