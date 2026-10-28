@@ -1,4 +1,35 @@
 services:
+  frps:
+    image: glzjin/frp
+    restart: always
+    volumes:
+      - ./conf/frp:/conf
+    entrypoint:
+      - /usr/local/bin/frps
+      - -c
+      - /conf/frps.ini
+    ports:
+      - 10000-10100:10000-10100
+      - 8001:8001
+    networks:
+      default:
+      frp_connect:
+        ipv4_address: 172.1.0.20
+  frpc:
+    image: glzjin/frp:latest
+    restart: always
+    volumes:
+      - ./conf/frp:/conf
+    entrypoint:
+      - /usr/local/bin/frpc
+      - -c
+      - /conf/frpc.ini
+    depends_on:
+      - frps
+    networks:
+      frp_containers:
+      frp_connect:
+        ipv4_address: 172.1.0.10
   ctfd:
     build: .
     restart: always
@@ -14,6 +45,7 @@ services:
       - ERROR_LOG=-
       - REVERSE_PROXY=true
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
       - .:/opt/CTFd:ro
@@ -24,9 +56,14 @@ services:
         condition: service_started
       cache:
         condition: service_started
+      frpc:
+        condition: service_started
     networks:
         default:
         internal:
+        frp_connect:
+    group_add:
+      - "109"
 
   # TODO: CTFd 4.0 Migrate to named volumes. Users will likely need to manually migrate existing files
   permissions:
@@ -78,3 +115,17 @@ networks:
     default:
     internal:
         internal: true
+    frp_connect:
+      driver: overlay
+      internal: true
+      attachable: true
+      ipam:
+        config:
+          - subnet: 172.1.0.0/16
+    frp_containers:
+      driver: overlay
+      internal: true
+      attachable: true
+      ipam:
+        config:
+          - subnet: 172.2.0.0/16
