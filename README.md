@@ -1,8 +1,9 @@
 # Custom CTFd setup
 
-This might be used for IN5290 Ethical Hacking at UiO in the future.\
-Currently only a proof of concept to see how easy it is to "automate" the
-deployment.
+![CTFd MySQL CI](https://github.com/CTFd/CTFd/workflows/CTFd%20MySQL%20CI/badge.svg?branch=master)
+![Linting](https://github.com/CTFd/CTFd/workflows/Linting/badge.svg?branch=master)
+[![Documentation Status](https://api.netlify.com/api/v1/badges/6d10883a-77bb-45c1-a003-22ce1284190e/deploy-status)](https://docs.ctfd.io)
+>>>>>>> upstream/master
 
 
 ## Setup
